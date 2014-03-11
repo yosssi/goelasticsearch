@@ -3,6 +3,7 @@ package goelasticsearch
 import (
 	"fmt"
 	"net/http"
+	"runtime"
 	"testing"
 )
 
@@ -166,12 +167,14 @@ func TestClientUpdate(t *testing.T) {
 
 func compare(name, expected, actual interface{}, t *testing.T) {
 	if expected != actual {
-		t.Errorf("Returned %s is invalid. [expteced: %v][actual: %v]", name, expected, actual)
+		_, _, line, _ := runtime.Caller(1)
+		t.Errorf("Returned %s is invalid. [expteced: %v][actual: %v][line: %d]", name, expected, actual, line)
 	}
 }
 
 func checkError(err error, t *testing.T) {
 	if err != nil {
-		t.Errorf("Error occurred. [error: %s]", err.Error())
+		_, _, line, _ := runtime.Caller(1)
+		t.Errorf("Error occurred. [error: %s][line: %d]", err.Error(), line)
 	}
 }
