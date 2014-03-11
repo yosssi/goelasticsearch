@@ -27,13 +27,49 @@ func (c *Client) DeleteIndex(indexName string) (int, interface{}, error) {
 	return parseResponse(res)
 }
 
-// Create calls the index operation to create a document.
+// Create calls the index API.
 func (c *Client) Create(indexName string, typeName string, data interface{}) (int, interface{}, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return 0, nil, err
 	}
 	res, err := http.Post(c.baseURL+"/"+indexName+"/"+typeName, "application/json", bytes.NewReader(b))
+	if err != nil {
+		return 0, nil, err
+	}
+	return parseResponse(res)
+}
+
+// Get calls the get API.
+func (c *Client) Get(indexName string, typeName string, id string) (int, interface{}, error) {
+	res, err := http.Get(c.baseURL + "/" + indexName + "/" + typeName + "/" + id)
+	if err != nil {
+		return 0, nil, err
+	}
+	return parseResponse(res)
+}
+
+// Delete calls the delete API.
+func (c *Client) Delete(indexName string, typeName string, id string) (int, interface{}, error) {
+	req, err := http.NewRequest("DELETE", c.baseURL+"/"+indexName+"/"+typeName+"/"+id, nil)
+	if err != nil {
+		return 0, nil, err
+	}
+	client := http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return 0, nil, err
+	}
+	return parseResponse(res)
+}
+
+// Update calls the update API
+func (c *Client) Update(indexName string, typeName string, id string, data interface{}) (int, interface{}, error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return 0, nil, err
+	}
+	res, err := http.Post(c.baseURL+"/"+indexName+"/"+typeName+"/"+id+"/_update", "application/json", bytes.NewReader(b))
 	if err != nil {
 		return 0, nil, err
 	}
