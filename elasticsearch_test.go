@@ -5,6 +5,31 @@ import (
 	"testing"
 )
 
+func init() {
+	c := NewClient("http://localhost:9200")
+	c.DeleteIndex("goelasticsearch")
+}
+
+func TestDeleteIndex(t *testing.T) {
+	// Case when http.NewRequest returns an error.
+	c := NewClient("")
+	msg := ""
+	_, _, err := c.DeleteIndex("goelasticsearch")
+	if err != nil {
+		msg = err.Error()
+	}
+	compare("error", `unsupported protocol scheme ""`, msg, t)
+
+	// Case when client.Do returns an error.
+	c = NewClient("http://localhost:65536")
+	msg = ""
+	_, _, err = c.DeleteIndex("goelasticsearch")
+	if err != nil {
+		msg = err.Error()
+	}
+	compare("error", "dial tcp: invalid port 65536", msg, t)
+}
+
 func TestClientCreate(t *testing.T) {
 	// Case when json.Marshal returns an error.
 	c := NewClient("http://localhost:9200")
