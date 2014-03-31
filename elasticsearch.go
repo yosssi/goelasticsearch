@@ -14,7 +14,7 @@ type Client struct {
 }
 
 // DeleteIndex calls the delete index API.
-func (c *Client) DeleteIndex(indexName string) (int, interface{}, error) {
+func (c *Client) DeleteIndex(indexName string) (int, map[string]interface{}, error) {
 	req, err := http.NewRequest("DELETE", c.baseURL+"/"+indexName, nil)
 	if err != nil {
 		return 0, nil, err
@@ -28,7 +28,7 @@ func (c *Client) DeleteIndex(indexName string) (int, interface{}, error) {
 }
 
 // Create calls the index API.
-func (c *Client) Create(indexName string, typeName string, data interface{}) (int, interface{}, error) {
+func (c *Client) Create(indexName string, typeName string, data interface{}) (int, map[string]interface{}, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return 0, nil, err
@@ -41,7 +41,7 @@ func (c *Client) Create(indexName string, typeName string, data interface{}) (in
 }
 
 // Get calls the get API.
-func (c *Client) Get(indexName string, typeName string, id string) (int, interface{}, error) {
+func (c *Client) Get(indexName string, typeName string, id string) (int, map[string]interface{}, error) {
 	res, err := http.Get(c.baseURL + "/" + indexName + "/" + typeName + "/" + id)
 	if err != nil {
 		return 0, nil, err
@@ -50,7 +50,7 @@ func (c *Client) Get(indexName string, typeName string, id string) (int, interfa
 }
 
 // Delete calls the delete API.
-func (c *Client) Delete(indexName string, typeName string, id string) (int, interface{}, error) {
+func (c *Client) Delete(indexName string, typeName string, id string) (int, map[string]interface{}, error) {
 	req, err := http.NewRequest("DELETE", c.baseURL+"/"+indexName+"/"+typeName+"/"+id, nil)
 	if err != nil {
 		return 0, nil, err
@@ -64,7 +64,7 @@ func (c *Client) Delete(indexName string, typeName string, id string) (int, inte
 }
 
 // Update calls the update API
-func (c *Client) Update(indexName string, typeName string, id string, data interface{}) (int, interface{}, error) {
+func (c *Client) Update(indexName string, typeName string, id string, data interface{}) (int, map[string]interface{}, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return 0, nil, err
@@ -82,7 +82,7 @@ func NewClient(baseURL string) *Client {
 }
 
 // parseResponse parses an HTTP response and returns the result.
-func parseResponse(res *http.Response) (int, interface{}, error) {
+func parseResponse(res *http.Response) (int, map[string]interface{}, error) {
 	code := res.StatusCode
 	body, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
