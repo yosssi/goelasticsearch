@@ -40,7 +40,7 @@ func TestClientDeleteIndex(t *testing.T) {
 	checkError(err, t)
 	compare("code", http.StatusOK, code, t)
 	expectedBody := map[string]interface{}{"acknowledged": true}
-	body := b.(map[string]interface{})
+	body := b
 	if body["acknowledged"] != expectedBody["acknowledged"] {
 		t.Errorf("Returned body is invalid. [expteced: %v][actual: %v]", expectedBody, body)
 	}
@@ -71,7 +71,7 @@ func TestClientCreate(t *testing.T) {
 	checkError(err, t)
 	compare("code", http.StatusCreated, code, t)
 	expectedBody := map[string]interface{}{"_index": "goelasticsearch", "_type": "article", "_version": float64(1), "created": true, "_id": "Automatically generated ID"}
-	body := b.(map[string]interface{})
+	body := b
 	if body["_index"] != expectedBody["_index"] || body["_type"] != expectedBody["_type"] || body["_version"] != expectedBody["_version"] || body["created"] != expectedBody["created"] {
 		t.Errorf("Returned body is invalid. [expected: %s][actual: %s]", expectedBody, body)
 	}
@@ -90,11 +90,11 @@ func TestClientGet(t *testing.T) {
 	// Case when no error is returned.
 	c = NewClient("http://localhost:9200")
 	_, b, _ := c.Create("goelasticsearch", "article", map[string]string{"a": "b"})
-	body := b.(map[string]interface{})
+	body := b
 	code, b, err := c.Get("goelasticsearch", "article", body["_id"].(string))
 	checkError(err, t)
 	compare("code", http.StatusOK, code, t)
-	body = b.(map[string]interface{})
+	body = b
 	if body["found"] != true {
 		t.Errorf("Target document was not found.")
 	}
@@ -122,11 +122,11 @@ func TestClientDelete(t *testing.T) {
 	// Case when no error is returned.
 	c = NewClient("http://localhost:9200")
 	_, b, _ := c.Create("goelasticsearch", "article", map[string]string{"a": "b"})
-	body := b.(map[string]interface{})
+	body := b
 	code, b, err := c.Delete("goelasticsearch", "article", body["_id"].(string))
 	checkError(err, t)
 	compare("code", http.StatusOK, code, t)
-	body = b.(map[string]interface{})
+	body = b
 	if body["found"] != true {
 		t.Errorf("Target document was not found.")
 	}
@@ -154,12 +154,12 @@ func TestClientUpdate(t *testing.T) {
 	// Case when no error is returned.
 	c = NewClient("http://localhost:9200")
 	_, b, _ := c.Create("goelasticsearch", "article", map[string]string{"a": "b", "c": "d"})
-	body := b.(map[string]interface{})
+	body := b
 	code, b, err := c.Update("goelasticsearch", "article", body["_id"].(string), map[string]string{"script": `ctx._source.a = "bb"`})
 	fmt.Println(b)
 	checkError(err, t)
 	compare("code", http.StatusOK, code, t)
-	body = b.(map[string]interface{})
+	body = b
 	if int(body["_version"].(float64)) != 2 {
 		t.Errorf("Target document was not updated.")
 	}
