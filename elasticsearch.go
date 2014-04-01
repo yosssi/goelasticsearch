@@ -84,7 +84,7 @@ func (c *Client) Search(indexName string, typeName string, q string) (int, map[s
 		url += "?q=" + q
 	}
 
-	res, err := http.Get(q)
+	res, err := http.Get(url)
 
 	if err != nil {
 		return 0, nil, err
