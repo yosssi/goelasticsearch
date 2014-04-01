@@ -76,6 +76,23 @@ func (c *Client) Update(indexName string, typeName string, id string, data inter
 	return parseResponse(res)
 }
 
+// Search calls the search API.
+func (c *Client) Search(indexName string, typeName string, q string) (int, map[string]interface{}, error) {
+	url := c.baseURL + "/" + indexName + "/" + typeName + "/_search"
+
+	if q != "" {
+		url += "?q=" + q
+	}
+
+	res, err := http.Get(q)
+
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return parseResponse(res)
+}
+
 // NewClient generates an Elasticsearch client and return it.
 func NewClient(baseURL string) *Client {
 	return &Client{baseURL: baseURL}
